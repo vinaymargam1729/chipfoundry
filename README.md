@@ -1,75 +1,56 @@
-# OpenFrame Overview
+# Edge Detector Peripheral for Microwatt
 
-The OpenFrame Project provides an empty harness chip that differs significantly from the Caravel and Caravan designs. Unlike Caravel and Caravan, which include integrated SoCs and additional features, OpenFrame offers only the essential padframe, providing users with a clean slate for their custom designs.
+## Overview
 
-<img width="256" alt="Screenshot 2024-06-24 at 12 53 39 PM" src="https://github.com/efabless/openframe_timer_example/assets/67271180/ff58b58b-b9c8-4d5e-b9bc-bf344355fa80">
+This project implements a **memory-mapped Edge Detector peripheral** in Verilog, designed for direct integration with the [Microwatt](https://github.com/antonblanchard/microwatt) open-source POWER CPU core. The peripheral monitors multiple input signals, detects rising and falling edges, latches event status, and can generate interrupts for prompt CPU response. It offers a highly reusable and practical digital IC function for embedded and open hardware systems.
 
-## Key Characteristics of OpenFrame
+---
 
-1. **Minimalist Design:** 
-   - No integrated SoC or additional circuitry.
-   - Only includes the padframe, a power-on-reset circuit, and a digital ROM containing the 32-bit project ID.
+## Key Features
 
-2. **Padframe Compatibility:**
-   - The padframe design and pin placements match those of the Caravel and Caravan chips, ensuring compatibility and ease of transition between designs.
-   - Pin types are identical, with power and ground pins positioned similarly and the same power domains available.
+- Monitors 4 digital input channels in real time
+- Detects and latches rising and falling edge events per channel
+- Memory-mapped register interface for communication with the Microwatt CPU
+- Configurable interrupt signal to the CPU on edge event detection
+- Status flags for each input, which can be cleared by software
+- Includes a self-checking Verilog testbench for comprehensive verification
 
-3. **Flexibility:**
-   - Provides full access to all GPIO controls.
-   - Maximizes the user project area, allowing for greater customization and integration of alternative SoCs or user-specific projects at the same hierarchy level.
+---
 
-4. **Simplified I/O:**
-   - Pins that previously connected to CPU functions (e.g., flash controller interface, SPI interface, UART) are now repurposed as general-purpose I/O, offering flexibility for various applications.
+## Integration with Microwatt
 
-The OpenFrame harness is ideal for those looking to implement custom SoCs or integrate user projects without the constraints of an existing SoC.
+- Exposed as a memory-mapped peripheral within the SoC address space
+- Status and control registers accessible by the CPU for configuration and event handling
+- Example software demonstrates polling and interrupt-driven edge event processing
 
-## Features
+---
 
-1. 44 configurable GPIOs.
-2. User area of approximately 15mm².
-3. Supports digital, analog, or mixed-signal designs.
+## Usage Scenarios
 
-# openframe_timer_example
+- Frequency and pulse width measurement
+- User input (button/key event) detection
+- Instrumentation, timing, and control systems
+- General event capture in digital SoC platforms
 
-This example implements a simple timer and connects it to the GPIOs.
+---
 
-## Installation and Setup
+## Deliverables
 
-First, clone the repository:
+- Verilog RTL code for the edge detector peripheral
+- Memory-mapped register and bus interface implementation
+- Testbench verifying all edge cases and interrupt features
+- Documentation for hardware and software integration
+- Example C/assembly for Microwatt-managed event handling
+- Demo video or simulation screenshots illustrating correct operation
 
-```bash
-git clone https://github.com/efabless/openframe_timer_example.git
-cd openframe_timer_example
-```
+---
 
-Then, download all dependencies:
+## License
 
-```bash
-make setup
-```
+This project is open source and distributed under the [MIT License](LICENSE).
 
-## Hardening the Design
+---
 
-In this example, we will harden the timer. You will need to harden your own design similarly.
+## Contributors
 
-```bash
-make user_proj_timer
-```
-
-Once you have hardened your design, integrate it into the OpenFrame wrapper:
-
-```bash
-make openframe_project_wrapper
-```
-
-## Important Notes
-
-1. **Connecting to Power:**
-   - Ensure your design is connected to power using the power pins on the wrapper.
-   - Use the `vccd1_connection` and `vssd1_connection` macros, which contain the necessary vias and nets for power connections.
-
-2. **Flattening the Design:**
-   - If you plan to flatten your design within the `openframe_project_wrapper`, do not buffer the analog pins using standard cells.
-
-3. **Running Custom Steps:**
-   - Execute the custom step in OpenLane that copies the power pins from the template DEF. If this step is skipped, the precheck will fail, and your design will not be powered.
+- [Margam Vinay](margam.vinay2025@vitstudent.ac.in)
